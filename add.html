@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Student Dashboard — USMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#081018; --card:#0b1220; --accent:#00ffd5; --accent2:#7c61ff; --muted:#9aa7b2;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; font-family:Inter,Arial,Helvetica,sans-serif; background:
+    radial-gradient(600px 300px at 10% 10%, rgba(124,97,255,0.06), transparent),
+    radial-gradient(500px 300px at 90% 90%, rgba(0,255,213,0.03), transparent),
+    linear-gradient(180deg,#071022,#071020);
+  color:#e7f7f3; min-height:100vh; padding:28px;
+}
+.wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:380px 1fr;gap:20px}
+header{grid-column:1/-1; display:flex;align-items:center;justify-content:space-between; gap:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-weight:800;color:#021}
+h1{font-size:20px;margin:0}
+p.sub{margin:0;color:var(--muted);font-size:13px}
+
+/* left column card */
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:14px;padding:18px;border:1px solid rgba(255,255,255,0.03);
+  box-shadow:0 12px 40px rgba(2,6,23,0.6);
+}
+
+label{display:block;font-size:13px;color:var(--muted);margin-top:8px}
+input[type="text"], input[type="email"], input[type="date"], textarea, select{
+  width:100%; padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.02); color:inherit; outline:none;
+}
+textarea{min-height:80px; resize:vertical}
+
+.btn{display:inline-block;padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+.btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#021; box-shadow:0 8px 28px rgba(124,97,255,0.12)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.04); color:var(--muted)}
+
+.small{font-size:13px;color:var(--muted);margin-top:8px}
+
+/* right column */
+.top-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-bottom:12px}
+.searchbar{display:flex;gap:8px;align-items:center}
+.searchbar input{width:260px}
+
+.list{margin-top:10px;}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:10px;border-bottom:1px dashed rgba(255,255,255,0.03); text-align:left}
+th{color:var(--muted);font-size:12px}
+tr:hover td{background:linear-gradient(90deg, rgba(0,255,213,0.02), rgba(124,97,255,0.02))}
+
+.id-pill{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:8px;font-weight:700;color:var(--accent);display:inline-block}
+
+/* details box */
+.profile{
+  margin-top:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)
+}
+.profile h3{margin:0 0 8px 0}
+.kv{display:flex;gap:8px;margin:6px 0;color:var(--muted)}
+.kv strong{width:110px;color:#dffbee}
+
+/* responsive */
+@media(max-width:980px){
+  .wrap{grid-template-columns:1fr; padding:12px}
+  .searchbar input{width:120px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">US</div>
+      <div>
+        <h1>USMS — Student Page</h1>
+        <p class="sub">Add students, auto-generate ID, fees status & join date • LocalStorage</p>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button class="btn btn-ghost" onclick="exportJSON()">Export JSON</button>
+      <button class="btn btn-ghost" onclick="importJSON()">Import JSON</button>
+      <button class="btn btn-primary" onclick="clearAll()">Clear All</button>
+    </div>
+  </header>
+
+  <!-- LEFT: Add Student -->
+  <section class="card" aria-labelledby="addHeading">
+    <h2 id="addHeading">➕ Add New Student</h2>
+    <div class="small">Automatic Student ID (random 5-digit) will be generated</div>
+
+    <label>Full Name</label>
+    <input type="text" id="name" placeholder="Enter full name">
+
+    <label>Class / Grade</label>
+    <input type="text" id="class" placeholder="e.g., 8, 9, 10-A">
+
+    <label>Date of Birth</label>
+    <input type="date" id="dob">
+
+    <label>Phone</label>
+    <input type="text" id="phone" placeholder="+91XXXXXXXXXX">
+
+    <label>Email</label>
+    <input type="email" id="email" placeholder="student@example.com">
+
+    <label>Address</label>
+    <textarea id="address" placeholder="Address (optional)"></textarea>
+
+    <label>Fees (₹)</label>
+    <input type="text" id="fees" placeholder="e.g., 5000">
+
+    <label>Fees Status</label>
+    <select id="feesStatus">
+      <option value="Unpaid">Unpaid</option>
+      <option value="Paid">Paid</option>
+    </select>
+
+    <label>Join Date</label>
+    <input type="date" id="joinDate">
+
+    <div style="margin-top:12px; display:flex; gap:10px;">
+      <button class="btn btn-primary" onclick="addStudent()">Generate & Add</button>
+      <button class="btn btn-ghost" onclick="fillSample()">Sample</button>
+    </div>
+
+    <div class="small">Last added: <span id="lastAdded">—</span></div>
+  </section>
+
+  <!-- RIGHT: Search, List, Profile -->
+  <section>
+    <div class="card" style="display:flex;flex-direction:column;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 style="margin:0">Students</h2>
+        <div class="searchbar">
+          <input type="text" id="searchId" placeholder="Search by ID" onkeydown="if(event.key==='Enter') searchById()">
+          <button class="btn btn-primary" onclick="searchById()">Search</button>
+        </div>
+      </div>
+
+      <div class="list" id="listWrap" style="margin-top:10px; overflow:auto; max-height:360px;">
+        <table id="studentsTable" aria-live="polite">
+          <thead><tr><th>ID</th><th>Name</th><th>Class</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="profile" id="profileBox" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h3 id="pName">Student Profile</h3>
+          <div><span class="id-pill" id="pId">12345</span></div>
+        </div>
+        <div class="kv"><strong>Name:</strong><div id="pName2"></div></div>
+        <div class="kv"><strong>Class:</strong><div id="pClass"></div></div>
+        <div class="kv"><strong>DOB:</strong><div id="pDOB"></div></div>
+        <div class="kv"><strong>Phone:</strong><div id="pPhone"></div></div>
+        <div class="kv"><strong>Email:</strong><div id="pEmail"></div></div>
+        <div class="kv"><strong>Address:</strong><div id="pAddress"></div></div>
+        <div class="kv"><strong>Fees:</strong><div id="pFees"></div></div>
+        <div class="kv"><strong>Fees Status:</strong><div id="pFeesStatus"></div></div>
+        <div class="kv"><strong>Join Date:</strong><div id="pJoinDate"></div></div>
+
+        <div style="margin-top:10px; display:flex; gap:8px;">
+          <button class="btn btn-primary" onclick="printProfile()">Print</button>
+          <button class="btn btn-ghost" id="editBtn" onclick="startEdit()">Edit</button>
+          <button class="btn btn-ghost" onclick="deleteCurrent()">Delete</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<script>
+let students = JSON.parse(localStorage.getItem('usms_students') || '[]');
+
+// generate random 5-digit unique ID
+function generateRandomId(){
+  let num;
+  do {
+    num = Math.floor(10000 + Math.random() * 90000);
+  } while(students.find(s=>s.id==num));
+  return String(num);
+}
+
+renderList();
+
+function addStudent(){
+  const name = document.getElementById('name').value.trim();
+  const cls = document.getElementById('class').value.trim();
+  const dob = document.getElementById('dob').value;
+  const phone = document.getElementById('phone').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const address = document.getElementById('address').value.trim();
+  const fees = document.getElementById('fees').value.trim();
+  const feesStatus = document.getElementById('feesStatus').value;
+  const joinDate = document.getElementById('joinDate').value;
+
+  if(!name || !cls){ alert('Please enter at least Name and Class'); return; }
+
+  const id = generateRandomId();
+  const student = { id, name, class: cls, dob, phone, email, address, fees, feesStatus, joinDate, created: new Date().toISOString() };
+  students.unshift(student);
+  saveAndRender();
+
+  document.getElementById('lastAdded').innerText = `${student.id} — ${student.name}`;
+  clearForm();
+  showProfile(student.id);
+}
+
+function fillSample(){
+  document.getElementById('name').value = "Ramesh Kumar";
+  document.getElementById('class').value = "8-A";
+  document.getElementById('dob').value = "2012-05-14";
+  document.getElementById('phone').value = "+91 9876543210";
+  document.getElementById('email').value = "ramesh@example.com";
+  document.getElementById('address').value = "Village Road, City";
+  document.getElementById('fees').value = "5000";
+  document.getElementById('feesStatus').value = "Unpaid";
+  document.getElementById('joinDate').value = "2025-08-20";
+}
+
+function clearForm(){
+  ['name','class','dob','phone','email','address','fees','feesStatus','joinDate'].forEach(id=>document.getElementById(id).value='');
+}
+
+function saveAndRender(){
+  localStorage.setItem('usms_students', JSON.stringify(students));
+  renderList();
+}
+
+function renderList(){
+  const tbody = document.querySelector('#studentsTable tbody');
+  tbody.innerHTML = '';
+  if(students.length===0){
+    tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted);">No students yet — add one on the left.</td></tr>';
+    hideProfile();
+    return;
+  }
+  students.forEach(s=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${s.id}</strong></td>
+      <td>${s.name}</td>
+      <td>${s.class}</td>
+      <td style="text-align:right">
+        <button class="btn" onclick="showProfile('${s.id}')">View</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function searchById(){
+  const q = document.getElementById('searchId').value.trim();
+  if(!q){ alert('Enter Student ID'); return; }
+  const found = students.find(s => s.id===q);
+  if(!found){ alert('Student not found'); hideProfile(); return; }
+  showProfile(found.id);
+}
+
+function showProfile(id){
+  const s = students.find(st => st.id===id);
+  if(!s) return;
+  document.getElementById('profileBox').style.display = 'block';
+  document.getElementById('pId').innerText = s.id;
+  document.getElementById('pName').innerText = s.name + " — Profile";
+  document.getElementById('pName2').innerText = s.name;
+  document.getElementById('pClass').innerText = s.class;
+  document.getElementById('pDOB').innerText = s.dob || '—';
+  document.getElementById('pPhone').innerText = s.phone || '—';
+  document.getElementById('pEmail').innerText = s.email || '—';
+  document.getElementById('pAddress').innerText = s.address || '—';
+  document.getElementById('pFees').innerText = s.fees || '—';
+  document.getElementById('pFeesStatus').innerText = s.feesStatus || 'Unpaid';
+  document.getElementById('pJoinDate').innerText = s.joinDate || '—';
+  document.getElementById('profileBox').dataset.current = s.id;
+}
+
+function hideProfile(){ 
+  const box = document.getElementById('profileBox'); box.style.display='none'; delete box.dataset.current;
+}
+
+function startEdit(){
+  const cur = document.getElementById('profileBox').dataset.current;
+  if(!cur){ alert('No student selected'); return; }
+  const s = students.find(st=>st.id===cur);
+  if(!s) return;
+  document.getElementById('name').value = s.name;
+  document.getElementById('class').value = s.class;
+  document.getElementById('dob').value = s.dob || '';
+  document.getElementById('phone').value = s.phone || '';
+  document.getElementById('email').value = s.email || '';
+  document.getElementById('address').value = s.address || '';
+  document.getElementById('fees').value = s.fees || '';
+  document.getElementById('feesStatus').value = s.feesStatus || 'Unpaid';
+  document.getElementById('joinDate').value = s.joinDate || '';
+  students = students.filter(st=>st.id!==cur);
+  saveAndRender();
+}
+
+function deleteCurrent(){
+  const cur = document.getElementById('profileBox').dataset.current;
+  if(!cur){ alert('No student selected'); return; }
+  if(!confirm('Delete ' + cur + ' ?')) return;
+  students = students.filter(s=>s.id!==cur);
+  saveAndRender(); hideProfile();
+}
+
+function exportJSON(){
+  if(students.length===0){ alert('No students to export'); return; }
+  const blob = new Blob([JSON.stringify(students, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download='students-usms.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+
+function importJSON(){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='application/json';
+  inp.onchange=e=>{
+    const f=e.target.files[0]; if(!f) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const arr=JSON.parse(ev.target.result);
+        if(!Array.isArray(arr)) throw 'Invalid format';
+        const existingIds=new Set(students.map(s=>s.id));
+        arr.forEach(x=>{ if(x && x.id && !existingIds.has(x.id)) students.push(x); });
+        saveAndRender();
+        alert('Import complete');
+      }catch(err){ alert('Invalid JSON file'); }
+    };
+    reader.readAsText(f);
+  };
+  inp.click();
+}
+
+function clearAll(){ if(!confirm('Clear all students?')) return; students=[]; localStorage.removeItem('usms_students'); renderList(); hideProfile(); }
+
+function printProfile(){
+  const cur=document.getElementById('profileBox').dataset.current;
+  if(!cur){ alert('Select a student first'); return; }
+  const s=students.find(x=>x.id===cur)||{};
+  const win=window.open('','_blank','width=600,height=700');
+  win.document.write(`<pre style="font-family:Inter,Arial;padding:18px">
+Student ID: ${s.id || '—'}
+Name      : ${s.name || '—'}
+Class     : ${s.class || '—'}
+DOB       : ${s.dob || '—'}
+Phone     : ${s.phone || '—'}
+Email     : ${s.email || '—'}
+Address   : ${s.address || '—'}
+Fees      : ${s.fees || '—'}
+Fees Status: ${s.feesStatus || 'Unpaid'}
+Join Date : ${s.joinDate || '—'}
+Created   : ${s.created || '—'}
+</pre>`);
+  win.document.title=s.name||'Student Profile'; win.print();
+}
+</script>
+
+</body>
+</html>
