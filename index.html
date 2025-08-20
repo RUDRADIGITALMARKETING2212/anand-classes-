@@ -62,24 +62,27 @@
       justify-content: center;
     }
 
-    a {
+    .nav button {
       background: var(--btn-bg);
       color: #fff;
       padding: 14px 24px;
       border-radius: 12px;
-      text-decoration: none;
+      border: none;
       font-size: clamp(0.95rem, 3vw, 1.1rem);
       font-weight: 600;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
       transition: 0.4s;
       cursor: pointer;
+      width: auto;
     }
 
-    a:hover {
+    .nav button:hover,
+    .nav button:focus {
       background: #fff;
       color: #2575fc;
       transform: translateY(-5px);
       box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+      outline: none;
     }
 
     .marquee-container {
@@ -128,7 +131,7 @@
         align-items: center;
       }
 
-      a {
+      .nav button {
         width: 80%;
         padding: 12px 0;
       }
@@ -150,8 +153,8 @@
 
   <!-- Navigation Buttons -->
   <div class="nav">
-    <a href="add.html">➕ Add Student</a>
-    <a href="view.html">📄 View Students</a>
+    <button onclick="location.href='add.html'">➕ Add Student</button>
+    <button onclick="location.href='view.html'">📄 View Students</button>
   </div>
 
   <!-- Scrolling Quotes -->
